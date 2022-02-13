@@ -1,34 +1,39 @@
 #!/bin/bash
-###########################################################################################
-#    ciab-onclick Desktop & Browser Access Setup Script v1                                #
-#                                                                                         #
-#    Based on:                                                                            #
-#        Github link: https://github.com/Har-Kuun/OneClickDesktop                         #
-#                                                                                         #
-###########################################################################################
+
+#==========================================================================================
+#    ciab-onclick Desktop & Browser Access Setup Script v1                                
+#                                                                                         
+#    Based on:                                                                            
+#        Github link: https://github.com/Har-Kuun/OneClickDesktop                         
+#                                                                                         
+#==========================================================================================
 
 
+#==========================================================================================
 # NOTE:  Execute this Script as SUDO or ROOT .. NOT as a normal UserID
 #        Check if user is root or sudo ... if NOT then exit and tell user.
 
 if ! [ $(id -u) = 0 ]; then echo "Please run this script as either SUDO or ROOT !"; exit 1 ; fi
 
 
+#==========================================================================================
+# You can change the Guacamole source file download link in this by checking the latest 
+# Guacamole Version number here:
+#
+#          https://guacamole.apache.org/releases/ for the latest stable version.
+#
 
-#You can change the Guacamole source file download link here.
-#Check https://guacamole.apache.org/releases/ for the latest stable version.
+#==========================================================================================
+# latest version of guacamole as of 2/10/2022 is v1.4.0
 
-GUACAMOLE_DOWNLOAD_LINK="https://mirrors.ocf.berkeley.edu/apache/guacamole/1.2.0/source/guacamole-server-1.2.0.tar.gz"
-GUACAMOLE_VERSION="1.2.0"
+GUACAMOLE_VERSION="1.4.0"
+GUACAMOLE_DOWNLOAD_LINK="https://mirrors.ocf.berkeley.edu/apache/guacamole/$GUACAMOLE_VERSION/source/guacamole-server-$GUACAMOLE_VERSION.tar.gz"
 
-#By default, this script only works on Ubuntu 18/20, Debian 10, and CentOS 7/8.
-#You can disable the OS check switch below and tweak the code yourself to try to install it in other OS versions.
-#Please do note that if you choose to use this script on OS other than Ubuntu 18/20, Debian 10, or CentOS 7/8, you might mess up your OS.  Please keep a backup of your server before installation.
+# By default, this script only works on Ubuntu 18/20, Debian 10, and CentOS 7/8.
+# You can disable the OS check switch below and tweak the code yourself to try to install it in other OS versions.
+# Please do note that if you choose to use this script on OS other than Ubuntu 18/20, Debian 10, or CentOS 7/8, you might mess up your OS.  Please keep a backup of your server before installation.
 
 OS_CHECK_ENABLED=ON
-
-
-
 
 #########################################################################
 #    Functions start here.                                              #
