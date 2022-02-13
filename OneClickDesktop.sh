@@ -1,19 +1,18 @@
 #!/bin/bash
 ###########################################################################################
-#    One-click Desktop & Browser Access Setup Script v0.2.0                               #
-#    Written by shc (https://qing.su)                                                     #
-#    Github link: https://github.com/Har-Kuun/OneClickDesktop                             #
-#    Contact me: https://t.me/hsun94   E-mail: hi@qing.su                                 #
+#    ciab-onclick Desktop & Browser Access Setup Script v1                                #
 #                                                                                         #
-#    This script is distributed in the hope that it will be                               #
-#    useful, but ABSOLUTELY WITHOUT ANY WARRANTY.                                         #
+#    Based on:                                                                            #
+#        Github link: https://github.com/Har-Kuun/OneClickDesktop                         #
 #                                                                                         #
-#    The author thanks LinuxBabe for providing detailed                                   #
-#    instructions on Guacamole setup.                                                     #
-#    https://www.linuxbabe.com/debian/apache-guacamole-remote-desktop-debian-10-buster    #
-#                                                                                         #
-#    Thank you for using this script.                                                     #
 ###########################################################################################
+
+
+# NOTE:  Execute this Script as SUDO or ROOT .. NOT as a normal UserID
+#        Check if user is root or sudo ... if NOT then exit and tell user.
+
+if ! [ $(id -u) = 0 ]; then echo "Please run this script as either SUDO or ROOT !"; exit 1 ; fi
+
 
 
 #You can change the Guacamole source file download link here.
