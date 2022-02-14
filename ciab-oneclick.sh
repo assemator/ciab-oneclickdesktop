@@ -50,59 +50,21 @@ exec 2>&1
 function check_OS
 {
 	if [ -f /etc/lsb-release ] ; then
-		cat /etc/lsb-release | grep "DISTRIB_RELEASE=18." >/dev/null
+		cat /etc/lsb-release | grep "DISTRIB_RELEASE=20." >/dev/null
 		if [ $? = 0 ] ; then
-			OS=UBUNTU18
+			OS=UBUNTU20
 		else
-			cat /etc/lsb-release | grep "DISTRIB_RELEASE=20." >/dev/null
-			if [ $? = 0 ] ; then
-				OS=UBUNTU20
-			else
-				say "Sorry, this script only supports Ubuntu 20, Debian 10, and CentOS 7/8." red
-				echo 
-				exit 1
-			fi
-		fi
-	elif [ -f /etc/debian_version ] ; then
-		cat /etc/debian_version | grep "^10." >/dev/null
-		if [ $? = 0 ] ; then
-			OS=DEBIAN10
-		else
-			say "Sorry, this script only supports Ubuntu 20, Debian 10, and CentOS 7/8." red
+			say "Sorry, this script only supports Ubuntu 20.04 LTS." red
 			echo 
 			exit 1
 		fi
-	elif [ -f /etc/redhat-release ] ; then
-		cat /etc/redhat-release | grep " 8." >/dev/null
-		if [ $? = 0 ] ; then
-			OS=CENTOS8
-			say @B"Support of CentOS 8 is experimental.  Please report bugs." yellow
-			say @B"Please try disabling selinux or firewalld if you cannot visit your desktop." yellow
-			echo 
-		else
-			cat /etc/redhat-release | grep " 7." >/dev/null
-			if [ $? = 0 ] ; then
-				OS=CENTOS7
-				say @B"Support of CentOS 7 is experimental.  Please report bugs." yellow
-				say @B"Please try disabling selinux or firewalld if you cannot visit your desktop." yellow
-				echo 
-			else
-				say "Sorry, this script only supports Ubuntu 20, Debian 10, and CentOS 7/8." red
-				echo
-				exit 1
-			fi
-		fi
-	else
-		say "Sorry, this script only supports Ubuntu 20, Debian 10, and CentOS 7/8." red
-		echo 
-		exit 1
 	fi
 }
 
 function say
 {
-#This function is a colored version of the built-in "echo."
-#https://github.com/Har-Kuun/useful-shell-functions/blob/master/colored-echo.sh
+
+# This function is a colored version of the built-in "echo."
 	echo_content=$1
 	case $2 in
 		black | k ) colorf=0 ;;
@@ -164,8 +126,6 @@ function get_user_options
 		echo "Choose 1 for 1280x800 (default), 2 to fit your local screen, or 3 to manually configure RDP screen resolution."
 		read rdp_resolution_options
 		if [ $rdp_resolution_options = 2 ] ; then
-			set_rdp_resolution=0;
-		else
 			set_rdp_resolution=1;
 			if [ $rdp_resolution_options = 3 ] ; then
 				echo 
@@ -182,6 +142,8 @@ function get_user_options
 					exit 1
 				fi
 			else
+				# this will be the "default"
+				
 				rdp_screen_width=1280
 				rdp_screen_height=800
 			fi
@@ -211,12 +173,14 @@ function get_user_options
 	else
 		say @B"OK, Nginx will be installed with a 'Self-Signed Certificate'..." yellow
 		
+		# Set NGINX to use a "Self-SignedCertificate"
+		
 		sudo $INSTALL_DIR/setup-nginx.sh
 		
 	fi
 	
 	echo 
-	say @B"Desktop environment installation will start now.  Please wait." green
+	say @B"Desktop Environment installation starting... " green
 	sleep 3
 }	
 
@@ -227,11 +191,8 @@ function install_guacamole_ubuntu_debian
 	echo 
 	apt-get update && apt-get upgrade -y
 	apt-get install wget curl sudo zip unzip tar perl expect build-essential libcairo2-dev libpng-dev libtool-bin libossp-uuid-dev libvncserver-dev freerdp2-dev libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev libavcodec-dev libavutil-dev libavformat-dev tomcat9 tomcat9-admin tomcat9-common tomcat9-user japan* chinese* korean* fonts-arphic-ukai fonts-arphic-uming fonts-ipafont-mincho fonts-ipafont-gothic fonts-unfonts-core -y
-	if [ "$OS" = "DEBIAN10" ] ; then
-		apt-get install libjpeg62-turbo-dev -y
-	else
-		apt-get install libjpeg-turbo8-dev language-pack-ja language-pack-zh* language-pack-ko -y
-	fi
+	apt-get install libjpeg-turbo8-dev -y
+
 	wget $GUACAMOLE_DOWNLOAD_LINK
 	tar zxf guacamole-server-${GUACAMOLE_VERSION}.tar.gz
 	rm -f guacamole-server-${GUACAMOLE_VERSION}.tar.gz
@@ -246,8 +207,6 @@ function install_guacamole_ubuntu_debian
 		echo 
 		say "Missing dependencies." red
 		echo "Please check log, install required dependencies, and run this script again."
-		echo "Please also consider to report your log here https://github.com/Har-Kuun/OneClickDesktop/issues so that I can fix this issue."
-		echo "Thank you!"
 		echo 
 		exit 1
 	fi
@@ -267,111 +226,18 @@ function install_guacamole_ubuntu_debian
 		echo 
 	else 
 		say "Guacamole Server installation failed." red
-		say @B"Please check the above log for reasons." yellow
-		echo "Please also consider to report your log here https://github.com/Har-Kuun/OneClickDesktop/issues so that I can fix this issue."
-		echo "Thank you!"
+		say @B"Please check the log for reasons." yellow
 		exit 1
 	fi
 }
 
 function install_guacamole_centos
 {
-	echo 
-	say @B"Setting up dependencies..." yellow
-	echo 
-	if [ "$OS" = "CENTOS8" ] ; then
-		dnf -y update
-		dnf -y group install "Development Tools"
-		dnf -y install --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm
-		dnf -y install http://rpmfind.net/linux/epel/7/x86_64/Packages/s/SDL2-2.0.10-1.el7.x86_64.rpm
-		dnf -y install http://mirror.centos.org/centos/8/Devel/x86_64/os/Packages/libuv-devel-1.23.1-1.el8.x86_64.rpm
-		dnf -y --enablerepo=PowerTools install perl expect cairo cairo-devel libpng-devel libtool uuid libjpeg-devel libjpeg-turbo-devel freerdp freerdp-devel pango-devel libssh2-devel libvncserver-devel pulseaudio-libs-devel openssl-devel libwebp-devel libwebsockets-devel libvorbis-devel ffmpeg-devel uuid-devel ffmpeg ffmpeg-devel mingw64-filesystem
-		yum -y groupinstall Fonts
-		dnf -y install java-11-openjdk-devel
-	else
-		yum update -y
-		yum -y install epel-release
-		yum -y install wget curl vim tar sudo zip unzip perl git cairo-devel freerdp-devel freerdp-plugins gcc gnu-free-mono-fonts libjpeg-turbo-devel libjpeg-turbo-official libpng-devel libssh2-devel libtelnet-devel libvncserver-devel libvorbis-devel libwebp-devel libwebsockets-devel openssl-devel pango-devel policycoreutils-python pulseaudio-libs-devel setroubleshoot uuid-devel
-		yum -y localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm
-		yum -y install ffmpeg ffmpeg-devel
-		yum -y groupinstall Fonts
-		yum -y install java-11-openjdk-devel
-	fi
-	install_tomcat9_centos
-	wget $GUACAMOLE_DOWNLOAD_LINK
-	tar zxf guacamole-server-${GUACAMOLE_VERSION}.tar.gz
-	rm -f guacamole-server-${GUACAMOLE_VERSION}.tar.gz
-	cd $CurrentDir/guacamole-server-$GUACAMOLE_VERSION
-	echo "Start building Guacamole Server from source..."
-	./configure --with-init-dir=/etc/init.d
-	if [ -f $CurrentDir/guacamole-server-$GUACAMOLE_VERSION/config.status ] ; then
-		say @B"Dependencies met!" green
-		say @B"Compiling now..." green
-		echo
-	else
-		echo 
-		say "Missing dependencies." red
-		echo "Please check log, install required dependencies, and run this script again."
-		echo "Please also consider to report your log here https://github.com/Har-Kuun/OneClickDesktop/issues so that I can fix this issue."
-		echo "Thank you!"
-		echo 
-		exit 1
-	fi
-	sleep 2
-	make
-	make install
-	ldconfig
-	echo "Trying to start Guacamole Server for the first time..."
-	echo "This can take a while..."
-	echo 
-	service guacd start
-	chkconfig guacd on
-	ss -lnpt | grep guacd >/dev/null
-	if [ $? = 0 ] ; then
-		say @B"Guacamole Server successfully installed!" green
-		echo 
-	else 
-		say "Guacamole Server installation failed." red
-		say @B"Please check the above log for reasons." yellow
-		echo "Please also consider to report your log here https://github.com/Har-Kuun/OneClickDesktop/issues so that I can fix this issue."
-		echo "Thank you!"
-		exit 1
-	fi
 }
 
 function install_tomcat9_centos
 {
-	curl -s https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.38/bin/apache-tomcat-9.0.38.tar.gz | tar -xz
-	mv apache-tomcat-9.0.38 /etc/tomcat9
-	echo "export CATALINA_HOME="/etc/tomcat9"" >> ~/.bashrc
-	source ~/.bashrc
-	useradd -r tomcat
-	chown -R tomcat:tomcat /etc/tomcat9
-	cat > /etc/systemd/system/tomcat9.service <<END
-[Unit]
-Description=Apache Tomcat Server
-After=syslog.target network.target
 
-[Service]
-Type=forking
-User=tomcat
-Group=tomcat
-
-Environment=CATALINA_PID=/etc/tomcat9/temp/tomcat.pid
-Environment=CATALINA_HOME=/etc/tomcat9
-Environment=CATALINA_BASE=/etc/tomcat9
-
-ExecStart=/etc/tomcat9/bin/catalina.sh start
-ExecStop=/etc/tomcat9/bin/catalina.sh stop
-
-RestartSec=10
-Restart=always
-[Install]
-WantedBy=multi-user.target
-END
-	systemctl daemon-reload
-	systemctl start tomcat9
-	systemctl enable tomcat9
 }
 	
 function install_guacamole_web
@@ -391,7 +257,7 @@ function install_guacamole_web
 	echo 
 }
 
-function configure_guacamole_ubuntu_debian
+function configure_guacamole_ubuntu
 {
 	echo 
 	mkdir /etc/guacamole/
@@ -435,22 +301,6 @@ END
 </user-mapping>
 END
 		fi
-	else
-		cat > /etc/guacamole/user-mapping.xml <<END
-<user-mapping>
-    <authorize
-         username="$guacamole_username"
-         password="$guacamole_password_md5"
-         encoding="md5">      
-       <connection name="default">
-         <protocol>vnc</protocol>
-         <param name="hostname">localhost</param>
-         <param name="port">5901</param>
-         <param name="password">$vnc_password</param>
-       </connection>
-    </authorize>
-</user-mapping>
-END
 	fi
 	systemctl restart tomcat9 guacd
 	say @B"Guacamole successfully configured!" green
@@ -911,60 +761,43 @@ function main
 	fi
 	echo "This script is going to install a desktop environment with browser access."
 	echo 
-	if [ "$OS" = "CENTOS7" ] || [ "$OS" = "CENTOS8" ] ; then
-		say @B"This environment requires at least 1.5 GB of RAM." yellow
-	else
-		say @B"This environment requires at least 1 GB of RAM." yellow
-	fi
+	say @B"This environment requires at least 1 GB of RAM." yellow
 	echo 
 	echo "Would you like to proceed? [Y/N]"
 	read confirm_installation
 	if [ "x$confirm_installation" = "xY" ] || [ "x$confirm_installation" = "xy" ] ; then
 		determine_system_variables
 		get_user_options
-		if [ "$OS" = "CENTOS7" ] || [ "$OS" = "CENTOS8" ] ; then
-			install_guacamole_centos
-		else
-			install_guacamole_ubuntu_debian
-		fi
+		install_guacamole_ubuntu
 		install_guacamole_web
-		if [ "$OS" = "CENTOS7" ] || [ "$OS" = "CENTOS8" ] ; then
-			configure_guacamole_centos
-		else
-			configure_guacamole_ubuntu_debian
-		fi
-		if [ $choice_rdpvnc = 1 ] ; then
-			install_rdp
-		else
-			install_vnc
-		fi
+		configure_guacamole_ubuntu
+		install_rdp
+		
 		if [ "x$install_nginx" != "xn" ] && [ "x$install_nginx" != "xN" ] ; then
 			install_reverse_proxy
 		else
-			say @B"You can now access your desktop at http://$(curl -s icanhazip.com):8080/guacamole!" green
+			#=================================================================================
+			# Enable xRDP Audio-Redirection so audio works in the Desktop
+
+			sudo $INSTALL_DIR/setup-xrdp-audio.sh
+			
+			say @B"You can now access your desktop at https://$(curl -s icanhazip.com)/guacamole!" green
 			say @B"Your Guacamole username is $guacamole_username and your password is $guacamole_password_prehash." green
 		fi
 		if [ $choice_rdpvnc = 1 ] ; then
 			echo 
-			say @B"Note that after entering Guacamole using the above Guacamole credentials, you will be asked to input your Linux server username and password in the XRDP login panel, which is NOT the guacamole username and password above.  Please use the default Xorg as session type." yellow
+			say @B"Note that after entering Guacamole using the above Guacamole credentials, you will be asked to input your Ubuntu Desktop Username and Password in the 'xRDP panel', which is NOT the ciab-oneclick 'Site' Username and Password above.  Please use the default Xorg as session type." yellow
 		fi
 	fi
 	echo 
-	echo "Thank you for using this script written by https://qing.su!"
-	echo "Have a nice day!"
 }
 
-###############################################################
-#                                                             #
-#               The main function starts here.                #
-#                                                             #
-###############################################################
+#==============================================================
+#
+#               The MAIN function starts here.
+#
+#==============================================================
 
 main
-
-#=================================================================================
-# Enable xRDP Audio-Redirection so audio works in the Desktop
-
-sudo $INSTALL_DIR/setup-xrdp-audio.sh
 
 exit 0
