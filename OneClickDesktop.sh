@@ -597,14 +597,16 @@ END
 function install_rdp
 {
 	echo 
-	echo "Starting to install desktop, browser, and XRDP server..."
+	echo "Start install od Selectable Desktop, Firefox Web Browser, and xRDP server..."
+	
 	if [ "$OS" = "UBUNTU18" ] || [ "$OS" = "UBUNTU20" ] ; then
-		say @B"Please note that if you are asked to configure LightDM during this step, simply press Enter." yellow
+		say @B"Please note that if you are asked to configure GDM or LightDM during this step, Choose GDM is usually best" yellow
 		echo 
 		echo "Press Enter to continue."
 		read catch_all
 		echo
 	fi
+	
 	if [ "$OS" = "DEBIAN10" ] ; then
 		apt-get install xfce4 xfce4-goodies firefox-esr xrdp -y
 	elif [ "$OS" = "CENTOS8" ] || [ "$OS" = "CENTOS7" ] ; then
@@ -614,6 +616,95 @@ function install_rdp
 		yum -y install xorgxrdp
 		echo "allowed_users=anybody" > /etc/X11/Xwrapper.config
 	else
+		echo
+		echo
+		echo "====={ CIAB Desktop Environment Chooser }======================================================================="
+		echo
+		echo " Pick the Desktop Environment you want to install in CIAB."
+		echo
+		echo
+
+		PS3=' Please enter your choice of Desktop Environment to install... '
+		LIST="KDE LXDE GNOME MATE XFCE BUDGIE"
+
+		select OPT in $LIST
+		do
+	
+			if [ $OPT = "KDE" ] &> /dev/null
+			then
+				echo
+				echo "---------------------------------"
+				echo "You chose the Kubuntu KDE Desktop"
+				echo
+				sudo apt-get install kubuntu-desktop -y
+				break
+
+			elif [ $OPT = "LXDE" ] &> /dev/null
+			then
+				echo
+				echo "----------------------------------"
+				echo "You chose the Lubuntu LXDE Desktop"
+				echo
+				sudo apt-get install lubuntu-desktop -y
+				break
+
+			elif [ $OPT = "GNOME" ] &> /dev/null
+			then
+				echo
+				echo "----------------------------------"
+				echo "You chose the Ubuntu Gnome Desktop"
+				echo
+				sudo apt-get install ubuntu-desktop -y
+				break
+
+			elif [ $OPT = "MATE" ] &> /dev/null
+			then
+				echo
+				echo "---------------------------------"
+				echo "You chose the Ubuntu MATE Desktop"
+				echo
+			
+				sudo apt install ubuntu-mate-desktop -y
+
+				# Create a flag file to indicate MATE was chosen for the Desktop Environment
+				# So when we install XRDP we will know whether we need to patch the
+				# /usr/share/applications/caja.desktop
+
+				sudo touch $INSTALL_DIR/fix-mate
+			
+				break
+
+			elif [ $OPT = "XFCE" ] &> /dev/null
+			then
+				echo
+				echo "----------------------------------"
+				echo "You chose the Xubuntu XFCE Desktop"
+				echo
+				sudo apt-get install xubuntu-desktop -y
+				break
+
+			elif [ $OPT = "BUDGIE" ] &> /dev/null
+			then
+				echo
+				echo "-----------------------------------"
+				echo "You chose the Ubuntu Budgie Desktop"
+				echo
+				sudo apt install ubuntu-budgie-desktop -y
+	
+				# create a flag file to indicate BUDGIE was chosen for the Desktop Environment
+				# So when we install XRDP we will know whether we need to patch /etc/xrdp/startwm.sh
+				# See - CIAB Installation PDF in Errata section at the end.
+		
+				sudo touch $INSTALL_DIR/fix-budgie
+			
+				break
+
+			fi
+
+		done
+	#END
+
+	sudo systemctl set-default graphical.target
 		apt-get install xfce4 xfce4-goodies firefox xrdp -y
 	fi
 	say @B"Desktop, browser, and XRDP server successfully installed." green
