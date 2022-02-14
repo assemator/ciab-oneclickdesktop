@@ -11,7 +11,7 @@
 #    The author thanks c-energy for providing detailed                                    
 #    instructions on pulseaudio setup.                                                    
 #    https://c-nergy.be/blog/?p=16817                                                     
-#                                                                                         
+#                                                                                       
 #==========================================================================================
  
 exec > >(tee -i OneClickDesktop_AudioRedirection.log)
