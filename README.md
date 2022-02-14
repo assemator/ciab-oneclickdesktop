@@ -4,8 +4,16 @@ A one-click script that installs a remote desktop environment on a Linux server 
 ## Features of this script
 * Build Guacamole Server from source.
 * Set up Guacamole Web APP.
-* Install Tomcat 9, XRDP (or TigerVNC), XFCE4 Desktop, Firefox.
-* One-click free SSL certificates from Let's Encrypt
+* Install Tomcat 9, XRDP (or TigerVNC), Installer Selectable Desktop Environment (DE) and Firefox.
+  Selectable DE include:  
+  - Kubuntu (KDE)
+  - Ubuntu (Gnome)
+  - Ubuntu-MATE
+  - Lubuntu (LXDE)
+  - Xubuntu (XFCE)
+  - Ubuntu-Budgie (Budgie)
+* One-click free SSL certificates from Let's Encrypt if Installer chooses **not** to use Let's Encrypt then this script will 
+  configure NGINX to use *Self-Signed Certificate* so End-Users can still use HTTPS with its additional communications encryption capability.
 * You can access your remote desktop from browsers, no need for RDP or VNC software.
 
 ## System requirement
