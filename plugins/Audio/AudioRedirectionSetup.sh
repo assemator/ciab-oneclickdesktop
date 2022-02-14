@@ -15,7 +15,7 @@
 #    Thank you for using this script.                                                     #
 ###########################################################################################
 
-
+ 
 exec > >(tee -i OneClickDesktop_AudioRedirection.log)
 exec 2>&1
 
