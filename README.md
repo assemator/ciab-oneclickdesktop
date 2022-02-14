@@ -38,7 +38,7 @@ A one-click script that installs a Selectable Remote Ubuntu Desktop Environment 
 >  su yourID
 >  wget https://github.com/bmullan/ciab-oneclickdesktop/archive/refs/heads/master.zip
 >  unzip master.zip
->  setup-
+>  setup-ciab-oneclick.sh
 
 ```
 * The script will guide you through the installation process.
