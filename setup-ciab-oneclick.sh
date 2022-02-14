@@ -197,8 +197,11 @@ function install_guacamole_ubuntu
 	say @B"Setting up dependencies..." yellow
 	echo
 	apt-get update && apt-get upgrade -y
-	apt-get install wget curl zip unzip tar perl expect build-essential libcairo2-dev libpng-dev libtool-bin libossp-uuid-dev freerdp2-dev libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev libavcodec-dev libavutil-dev libavformat-dev tomcat9 tomcat9-admin tomcat9-common tomcat9-user japan* chinese* korean* fonts-arphic-ukai fonts-arphic-uming fonts-ipafont-mincho fonts-ipafont-gothic fonts-unfonts-core -y
-	apt-get install libjpeg-turbo8-dev -y
+	apt-get -y install wget curl zip unzip tar perl expect build-essential libcairo2-dev libpng-dev libtool-bin libossp-uuid-dev freerdp2-dev 
+	apt-get -y libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev 
+	apt-get -y libavcodec-dev libavutil-dev libavformat-dev tomcat9 tomcat9-admin tomcat9-common tomcat9-user 
+	apt-get -y fonts-ipafont-gothic fonts-unfonts-core
+	apt-get -y install libjpeg-turbo8-dev 
 
 	wget $GUACAMOLE_DOWNLOAD_LINK
 	tar zxf guacamole-server-${GUACAMOLE_VERSION}.tar.gz
