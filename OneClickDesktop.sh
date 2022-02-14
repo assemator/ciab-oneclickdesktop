@@ -35,6 +35,8 @@ GUACAMOLE_DOWNLOAD_LINK="https://mirrors.ocf.berkeley.edu/apache/guacamole/$GUAC
 
 OS_CHECK_ENABLED=ON
 
+INSTALL_DIR=/opt/ciab/
+
 #########################################################################
 #    Functions start here.                                              #
 #    Do not change anything below unless you know what you are doing.   #
