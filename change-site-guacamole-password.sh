@@ -30,7 +30,7 @@ echo
 	new_password_line="         password=\"$guacamole_password_md5\""
 	old_username_line="$(grep username= /etc/guacamole/user-mapping.xml)"
 	old_password_line="$(grep password= /etc/guacamole/user-mapping.xml)"
-	echo 
+	echo
 	sed -i "s#$old_username_line#$new_username_line#g" /etc/guacamole/user-mapping.xml
 	sed -i "s#$old_password_line#$new_password_line#g" /etc/guacamole/user-mapping.xml
 	systemctl restart tomcat9 guacd
