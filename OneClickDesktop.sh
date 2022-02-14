@@ -35,7 +35,10 @@ GUACAMOLE_DOWNLOAD_LINK="https://mirrors.ocf.berkeley.edu/apache/guacamole/$GUAC
 
 OS_CHECK_ENABLED=ON
 
-INSTALL_DIR=/opt/ciab/
+#==========================================================================================
+# ID where our Install files are located 
+
+INSTALL_DIR=/opt/ciab
 
 #########################################################################
 #    Functions start here.                                              #
@@ -145,21 +148,17 @@ function determine_system_variables
 function get_user_options
 {
 	echo 
-	say @B"Please input your Guacamole username:" yellow
+	say @B"Please input your 'Site' Guacamole username:" yellow
 	read guacamole_username
 	echo 
-	say @B"Please input your Guacamole password:" yellow
+	say @B"Please input your 'Site' Guacamole password:" yellow
 	read guacamole_password_prehash
 	read guacamole_password_md5 <<< $(echo -n $guacamole_password_prehash | md5sum | awk '{print $1}')
 	echo 
-	if [ "x$OS" != "xCENTOS8" ] && [ "x$OS" != "xCENTOS7" ] ; then
-		say @B"Would you like Guacamole to connect to the server desktop through RDP or VNC?" yellow
-		say @B"Input 1 for RDP, or 2 for VNC.  If you have no idea what's this, please choose 1." yellow
-		read choice_rdpvnc
-	else 
-		say @B"Guacamole will use RDP to communicate with server desktop." yellow
-		choice_rdpvnc=1
-	fi
+
+	say @B"Guacamole will use RDP to communicate with server desktop." yellow
+	choice_rdpvnc=1
+
 	echo 
 	if [ $choice_rdpvnc = 1 ] ; then
 		say @B"Please choose a screen resolution." yellow
@@ -189,15 +188,6 @@ function get_user_options
 			fi
 		fi
 		say @B"Screen resolution successfully configured." green
-	else
-		echo 
-		while [ ${#vnc_password} != 8 ] ; do
-			say @B"Please input your 8-character VNC password:" yellow
-		read vnc_password
-		done
-		say @B"VNC password successfully configured." green
-		echo "Please note that VNC password is NOT needed for browser access."
-		sleep 1
 	fi
 	echo 
 	say @B"Would you like to set up Nginx Reverse Proxy?" yellow
@@ -220,8 +210,12 @@ function get_user_options
 			read le_email
 		fi
 	else
-		say @B"OK, Nginx will NOT be installed on this server." yellow
+		say @B"OK, Nginx will be installed with a 'Self-Signed Certificate'..." yellow
+		
+		sudo $INSTALL_DIR/setup-nginx.sh
+		
 	fi
+	
 	echo 
 	say @B"Desktop environment installation will start now.  Please wait." green
 	sleep 3
