@@ -28,9 +28,8 @@ if ! [ $(id -u) = 0 ]; then echo "Please run this script as either SUDO or ROOT 
 GUACAMOLE_VERSION="1.4.0" 
 GUACAMOLE_DOWNLOAD_LINK="https://mirrors.ocf.berkeley.edu/apache/guacamole/$GUACAMOLE_VERSION/source/guacamole-server-$GUACAMOLE_VERSION.tar.gz"
 
-# By default, this script only works on Ubuntu 18/20, Debian 10, and CentOS 7/8.
-# You can disable the OS check switch below and tweak the code yourself to try to install it in other OS versions.
-# Please do note that if you choose to use this script on OS other than Ubuntu 18/20, Debian 10, or CentOS 7/8, you might mess up your OS.  Please keep a backup of your server before installation.
+#==========================================================================================
+# By default, this script only works on Ubuntu 20.04 LTS
 
 OS_CHECK_ENABLED=ON
 
@@ -44,7 +43,7 @@ INSTALL_DIR=/opt/ciab
 #    Do not change anything below unless you know what you are doing.   #
 #########################################################################
 
-exec > >(tee -i OneClickDesktop.log)
+exec > >(tee -i ciab-oneclick.log)
 exec 2>&1
 
 function check_OS
