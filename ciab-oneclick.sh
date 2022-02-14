@@ -359,82 +359,6 @@ END
 
 function install_vnc
 {
-	echo 
-	echo "Starting to install desktop, browser, and VNC server..."
-	say @B"Please note that if you are asked to configure LightDM during this step, simply press Enter." yellow
-	echo 
-	echo "Press Enter to continue."
-	read catch_all
-	echo 
-	if [ "$OS" = "DEBIAN10" ] ; then
-		apt-get install xfce4 xfce4-goodies firefox-esr tigervnc-standalone-server tigervnc-common -y
-	else 
-		apt-get install xfce4 xfce4-goodies firefox tigervnc-standalone-server tigervnc-common -y
-	fi
-	say @B"Desktop, browser, and VNC server successfully installed." green
-	echo "Starting to configure VNC server..."
-	sleep 2
-	echo 
-	mkdir $HomeDir/.vnc
-	cat > $HomeDir/.vnc/xstartup <<END
-#!/bin/bash
-
-xrdb $HomeDir/.Xresources
-startxfce4 &
-END
-	cat > /etc/systemd/system/vncserver@.service <<END
-[Unit]
-Description=a wrapper to launch an X server for VNC
-After=syslog.target network.target
-
-[Service]
-Type=forking
-User=$CurrentUser
-Group=$CurrentUser
-WorkingDirectory=$HomeDir
-
-ExecStartPre=-/usr/bin/vncserver -kill :%i > /dev/null 2>&1
-ExecStart=/usr/bin/vncserver -depth 24 -geometry 1280x800 -localhost :%i
-ExecStop=/usr/bin/vncserver -kill :%i
-
-[Install]
-WantedBy=multi-user.target
-END
-	vncpassbinpath=/usr/bin/vncpasswd
-	/usr/bin/expect <<END
-spawn "$vncpassbinpath"
-expect "Password:"
-send "$vnc_password\r"
-expect "Verify:"
-send "$vnc_password\r"
-expect "Would you like to enter a view-only password (y/n)?"
-send "n\r"
-expect eof
-exit
-END
-	vncserver
-	sleep 2
-	vncserver -kill :1
-	systemctl start vncserver@1.service
-	systemctl enable vncserver@1.service
-	/usr/bin/vncconfig -display :1 &
-	cat > $HomeDir/Desktop/EnableCopyPaste.sh <<END
-#!/bin/bash
-/usr/bin/vncconfig -display :1 &
-END
-	chmod +x $HomeDir/Desktop/EnableCopyPaste.sh
-	echo 
-	ss -lnpt | grep vnc > /dev/null
-	if [ $? = 0 ] ; then
-		say @B"VNC and desktop successfully configured!" green
-		echo 
-	else
-		say "VNC installation failed!" red
-		say @B"Please check the above log for reasons." yellow
-		echo "Please also consider to report your log here https://github.com/Har-Kuun/OneClickDesktop/issues so that I can fix this issue."
-		echo "Thank you!"
-		exit 1
-	fi
 }
 
 function install_rdp
@@ -450,153 +374,103 @@ function install_rdp
 		echo
 	fi
 	
-	if [ "$OS" = "DEBIAN10" ] ; then
-		apt-get install xfce4 xfce4-goodies firefox-esr xrdp -y
-	elif [ "$OS" = "CENTOS8" ] || [ "$OS" = "CENTOS7" ] ; then
-		yum -y groupinstall "Server with GUI"
-		yum -y install firefox
-		compile_xrdp_centos
-		yum -y install xorgxrdp
-		echo "allowed_users=anybody" > /etc/X11/Xwrapper.config
-	else
-		echo
-		echo
-		echo "====={ CIAB Desktop Environment Chooser }======================================================================="
-		echo
-		echo " Pick the Desktop Environment you want to install in CIAB."
-		echo
-		echo
+	echo
+	echo
+	echo "====={ CIAB Desktop Environment Chooser }======================================================================="
+	echo
+	echo " Pick the Desktop Environment you want to install in CIAB."
+	echo
+	echo
 
-		PS3=' Please enter your choice of Desktop Environment to install... '
-		LIST="KDE LXDE GNOME MATE XFCE BUDGIE"
+	PS3=' Please enter your choice of Desktop Environment to install... '
+	LIST="KDE LXDE GNOME MATE XFCE BUDGIE"
 
-		select OPT in $LIST
-		do
+	select OPT in $LIST
+	do
 	
-			if [ $OPT = "KDE" ] &> /dev/null
-			then
-				echo
-				echo "---------------------------------"
-				echo "You chose the Kubuntu KDE Desktop"
-				echo
-				sudo apt-get install kubuntu-desktop -y
-				break
+		if [ $OPT = "KDE" ] &> /dev/null
+		then
+			echo
+			echo "---------------------------------"
+			echo "You chose the Kubuntu KDE Desktop"
+			echo
+			sudo apt-get install kubuntu-desktop -y
+			break
 
-			elif [ $OPT = "LXDE" ] &> /dev/null
-			then
-				echo
-				echo "----------------------------------"
-				echo "You chose the Lubuntu LXDE Desktop"
-				echo
-				sudo apt-get install lubuntu-desktop -y
-				break
+		elif [ $OPT = "LXDE" ] &> /dev/null
+		then
+			echo
+			echo "----------------------------------"
+			echo "You chose the Lubuntu LXDE Desktop"
+			echo
+			sudo apt-get install lubuntu-desktop -y
+			break
 
-			elif [ $OPT = "GNOME" ] &> /dev/null
-			then
-				echo
-				echo "----------------------------------"
-				echo "You chose the Ubuntu Gnome Desktop"
-				echo
-				sudo apt-get install ubuntu-desktop -y
-				break
+		elif [ $OPT = "GNOME" ] &> /dev/null
+		then
+			echo
+			echo "----------------------------------"
+			echo "You chose the Ubuntu Gnome Desktop"
+			echo
+			sudo apt-get install ubuntu-desktop -y
+			break
 
-			elif [ $OPT = "MATE" ] &> /dev/null
-			then
-				echo
-				echo "---------------------------------"
-				echo "You chose the Ubuntu MATE Desktop"
-				echo
+		elif [ $OPT = "MATE" ] &> /dev/null
+		then
+			echo
+			echo "---------------------------------"
+			echo "You chose the Ubuntu MATE Desktop"
+			echo
 			
-				sudo apt install ubuntu-mate-desktop -y
+			sudo apt install ubuntu-mate-desktop -y
 
-				# Create a flag file to indicate MATE was chosen for the Desktop Environment
-				# So when we install XRDP we will know whether we need to patch the
-				# /usr/share/applications/caja.desktop
+			# Create a flag file to indicate MATE was chosen for the Desktop Environment
+			# So when we install XRDP we will know whether we need to patch the
+			# /usr/share/applications/caja.desktop
 
-				sudo touch $INSTALL_DIR/fix-mate
+			sudo touch $INSTALL_DIR/fix-mate
 			
-				break
+			break
 
-			elif [ $OPT = "XFCE" ] &> /dev/null
-			then
-				echo
-				echo "----------------------------------"
-				echo "You chose the Xubuntu XFCE Desktop"
-				echo
-				sudo apt-get install xubuntu-desktop -y
-				break
+		elif [ $OPT = "XFCE" ] &> /dev/null
+		then
+			echo
+			echo "----------------------------------"
+			echo "You chose the Xubuntu XFCE Desktop"
+			echo
+			sudo apt-get install xubuntu-desktop -y
+			break
 
-			elif [ $OPT = "BUDGIE" ] &> /dev/null
-			then
-				echo
-				echo "-----------------------------------"
-				echo "You chose the Ubuntu Budgie Desktop"
-				echo
-				sudo apt install ubuntu-budgie-desktop -y
+		elif [ $OPT = "BUDGIE" ] &> /dev/null
+		then
+			echo
+			echo "-----------------------------------"
+			echo "You chose the Ubuntu Budgie Desktop"
+			echo
+			sudo apt install ubuntu-budgie-desktop -y
 	
-				# create a flag file to indicate BUDGIE was chosen for the Desktop Environment
-				# So when we install XRDP we will know whether we need to patch /etc/xrdp/startwm.sh
-				# See - CIAB Installation PDF in Errata section at the end.
+			# create a flag file to indicate BUDGIE was chosen for the Desktop Environment
+			# So when we install XRDP we will know whether we need to patch /etc/xrdp/startwm.sh
+			# See - CIAB Installation PDF in Errata section at the end.
+	
+			sudo touch $INSTALL_DIR/fix-budgie
 		
-				sudo touch $INSTALL_DIR/fix-budgie
-			
-				break
+			break
 
-			fi
+		fi
 
-		done
+	done
 	#END
 
 	sudo systemctl set-default graphical.target
-		apt-get install xfce4 xfce4-goodies firefox xrdp -y
-	fi
+	apt-get install firefox xrdp -y
+
 	say @B"Desktop, browser, and XRDP server successfully installed." green
 	echo "Starting to configure XRDP server..."
 	sleep 2
 	echo 
-	if [ "$OS" != "CENTOS7" ] && [ "$OS" != "CENTOS8" ] ; then
-		mv /etc/xrdp/startwm.sh /etc/xrdp/startwm.sh.backup
-		cat > /etc/xrdp/startwm.sh <<END
-#!/bin/sh
-# xrdp X session start script (c) 2015, 2017 mirabilos
-# published under The MirOS Licence
 
-if test -r /etc/profile; then
-        . /etc/profile
-fi
-
-if test -r /etc/default/locale; then
-        . /etc/default/locale
-        test -z "${LANG+x}" || export LANG
-        test -z "${LANGUAGE+x}" || export LANGUAGE
-        test -z "${LC_ADDRESS+x}" || export LC_ADDRESS
-        test -z "${LC_ALL+x}" || export LC_ALL
-        test -z "${LC_COLLATE+x}" || export LC_COLLATE
-        test -z "${LC_CTYPE+x}" || export LC_CTYPE
-        test -z "${LC_IDENTIFICATION+x}" || export LC_IDENTIFICATION
-        test -z "${LC_MEASUREMENT+x}" || export LC_MEASUREMENT
-        test -z "${LC_MESSAGES+x}" || export LC_MESSAGES
-        test -z "${LC_MONETARY+x}" || export LC_MONETARY
-        test -z "${LC_NAME+x}" || export LC_NAME
-        test -z "${LC_NUMERIC+x}" || export LC_NUMERIC
-        test -z "${LC_PAPER+x}" || export LC_PAPER
-        test -z "${LC_TELEPHONE+x}" || export LC_TELEPHONE
-        test -z "${LC_TIME+x}" || export LC_TIME
-        test -z "${LOCPATH+x}" || export LOCPATH
-fi
-
-if test -r /etc/profile; then
-        . /etc/profile
-fi
-
- xfce4-session
-
-test -x /etc/X11/Xsession && exec /etc/X11/Xsession
-exec /bin/sh /etc/X11/Xsession
-
-END
-		chmod +x /etc/xrdp/startwm.sh
-	fi
+	chmod +x /etc/xrdp/startwm.sh
 	systemctl enable xrdp
 	systemctl restart xrdp
 	sleep 5
@@ -621,9 +495,9 @@ END
 	if [ $? = 0 ] ; then
 		ss -lnpt | grep guacd > /dev/null
 		if [ $? = 0 ] ; then
-			say @B"XRDP and desktop successfully configured!" green
+			say @B"xRDP and Desktop successfully configured!" green
 		else 
-			say @B"XRDP and desktop successfully configured!" green
+			say @B"xRDP and Desktop successfully configured!" green
 			sleep 3
 			systemctl start guacd
 		fi
@@ -631,56 +505,13 @@ END
 	else
 		say "XRDP installation failed!" red
 		say @B"Please check the above log for reasons." yellow
-		echo "Please also consider to report your log here https://github.com/Har-Kuun/OneClickDesktop/issues so that I can fix this issue."
-		echo "Thank you!"
 		exit 1
 	fi
 }
 
 function compile_xrdp_centos
 {
-	if [ "$OS" = "CENTOS7" ] ; then
-		yum -y install firefox finger cmake patch gcc make autoconf libtool automake pkgconfig openssl-devel gettext file pam-devel libX11-devel libXfixes-devel libjpeg-devel libXrandr-devel nasm flex bison gcc-c++ libxslt perl-libxml-perl xorg-x11-font-utils xmlto-tex
-	else
-		dnf -y --enablerepo=PowerTools install firefox cmake patch gcc make autoconf libtool automake pkgconfig openssl-devel gettext file pam-devel libX11-devel libXfixes-devel libjpeg-devel libXrandr-devel nasm flex bison gcc-c++ libxslt perl-libxml-perl xorg-x11-font-utils
-	fi
-	echo 
-	say @B"Starting to build xrdp from source..." yellow
-	sleep 2
-	cd $CurrentDir
-	git clone --recursive https://github.com/neutrinolabs/xrdp.git
-	cd xrdp
-	./bootstrap
-	./configure
-	if [ -f $CurrentDir/xrdp/config.status ] ; then
-		say @B"Dependencies met!" green
-		say @B"Compiling now..." green
-		echo
-	else
-		echo 
-		say "Missing dependencies." red
-		echo "Please check log, install required dependencies, and run this script again."
-		echo "Please also consider to report your log here https://github.com/Har-Kuun/OneClickDesktop/issues so that I can fix this issue."
-		echo "Thank you!"
-		echo 
-		exit 1
-	fi
-	sleep 2
-	make
-	make install
-	systemctl start xrdp
-	echo 
-	ss -lnpt | grep xrdp >/dev/null
-	if [ $? = 0 ] ; then
-		say @B"Xrdp successfully installed!" green
-		echo 
-	else 
-		say "XRDP installation failed!" red
-		say @B"Please check the above log for reasons." yellow
-		echo "Please also consider to report your log here https://github.com/Har-Kuun/OneClickDesktop/issues so that I can fix this issue."
-		echo "Thank you!"
-		exit 1
-	fi
+
 }
 
 function display_license
@@ -701,18 +532,10 @@ function install_reverse_proxy
 	echo 
 	say @B"Setting up Nginx reverse proxy..." yellow
 	sleep 2
-	if [ "$OS" = "CENTOS8" ] ; then
-		dnf -y install nginx certbot python3-certbot-nginx
-		systemctl enable nginx
-		systemctl start nginx
-	elif [ "$OS" = "CENTOS7" ] ; then
-		yum -y install nginx certbot python-certbot-nginx
-		systemctl enable nginx
-		systemctl start nginx
-	else
-		apt-get install nginx certbot python3-certbot-nginx -y
-	fi
-		say @B"Nginx successfully installed!" green
+	
+	apt-get install nginx certbot python3-certbot-nginx -y
+	
+	say @B"Nginx successfully installed!" green
 	cat > /etc/nginx/conf.d/guacamole.conf <<END
 server {
         listen 80;
