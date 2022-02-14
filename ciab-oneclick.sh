@@ -15,7 +15,6 @@
 
 if ! [ $(id -u) = 0 ]; then echo "Please run this script as either SUDO or ROOT !"; exit 1 ; fi
 
-
 #==========================================================================================
 # You can change the Guacamole source file download link in this by checking the latest 
 # Guacamole Version number here:
@@ -962,4 +961,10 @@ function main
 ###############################################################
 
 main
+
+#=================================================================================
+# Enable xRDP Audio-Redirection so audio works in the Desktop
+
+sudo $INSTALL_DIR/setup-xrdp-audio.sh
+
 exit 0
