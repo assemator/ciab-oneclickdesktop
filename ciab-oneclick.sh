@@ -26,7 +26,7 @@ if ! [ $(id -u) = 0 ]; then echo "Please run this script as either SUDO or ROOT 
 #==========================================================================================
 # latest version of guacamole as of 2/10/2022 is v1.4.0
 
-GUACAMOLE_VERSION="1.4.0"
+GUACAMOLE_VERSION="1.4.0" 
 GUACAMOLE_DOWNLOAD_LINK="https://mirrors.ocf.berkeley.edu/apache/guacamole/$GUACAMOLE_VERSION/source/guacamole-server-$GUACAMOLE_VERSION.tar.gz"
 
 # By default, this script only works on Ubuntu 18/20, Debian 10, and CentOS 7/8.
