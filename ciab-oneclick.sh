@@ -4,7 +4,7 @@
 #    ciab-onclick Desktop & Browser Access Setup Script v1                                
 #                                                                                         
 #    Based on:                                                                            
-#        Github link: https://github.com/Har-Kuun/OneClickDesktop                         
+#       Github link: https://github.com/Har-Kuun/OneClickDesktop                         
 #                                                                                         
 #==========================================================================================
 
