@@ -18,19 +18,27 @@ A one-click script that installs a Selectable Remote Ubuntu Desktop Environment 
 * You can access your remote desktop from browsers, no need for RDP or VNC software.
 
 ## System requirement
-* A __freshly installed__ server, with Ubuntu 18.04/20.04 LTS 64 bit, Debian 10 64 bit, or CentOS 7/8 64 bit system
-* __Do NOT install any web server programs (e.g., Apache, Nginx, LiteSpeed, Caddy).  Do NOT install LAMP or LEMP stack.  Do NOT install any admin panels (e.g., cPanel, DirectAdmin, BTcn, VestaCP).  They are NOT compatible with this script.__
+* A __freshly installed__ server, with Ubuntu 20.04 LTS 64 bit
 * One IPv4 internet accessible interface
-* For Ubuntu users, at least 1.0 GB RAM is required; 1.5+ GB is recommended.
-* Root access, or sudo user
+* Root access, or sudo user access in **both** the Host/Server/Cloud-instance/VM _**and**_ in the LXD container
 
 ## How to use
-* Firstly, you need to find a Host/Server/Cloud-instance/VM with at least 1 IPv4, and install Ubuntu 20.04 LTS.
-* If installer elects to use Lets-Encrypt you will need a domain name (can be a subdomain) which points to the IP address of your server.
-* Then, please run the following command as a sudo user in SSH.
+* Firstly, you need to find a Host/Server/Cloud-instance/VM with Ubuntu 20.04 LTS installed.
+* If installing User elects to use Lets-Encrypt you will need a domain name (can be a subdomain) which points to the IP address of your server.
+* Then, please run the following commands as a sudo user in the Host/Server/Cloud-instance/VM
 
 ```
-# wget https://raw.githubusercontent.com/bmullan/ciab-oneclickdesktop/master/setup-ciab-oneclick.sh && sudo bash setup-ciab-oneclick.sh
+>  sudo adduser yourID  # answer all the questions to setup your own User Account in both the HOST & container
+>  sudo adduser yourID adm
+>  sudo adduser yourID sudo
+>  sudo mkdir /opt/ciab
+>  sudo chown yourID:yourID /opt/ciab
+>  sudo chmod 766 /opt/ciab
+>  cd /opt/ciab
+>  su yourID
+>  wget https://github.com/bmullan/ciab-oneclickdesktop/archive/refs/heads/master.zip
+>  unzip master.zip
+>  setup-
 
 ```
 * The script will guide you through the installation process.
