@@ -1,24 +1,25 @@
 #!/bin/bash
-###########################################################################################
-#    Audio Redirection Setup Script for OneClickDesktop                                   #
-#    Written by shc (https://qing.su)                                                     #
-#    Github link: https://github.com/Har-Kuun/OneClickDesktop                             #
-#    Contact me: https://t.me/hsun94   E-mail: hi@qing.su                                 #
-#                                                                                         #
-#    This script is distributed in the hope that it will be                               #
-#    useful, but ABSOLUTELY WITHOUT ANY WARRANTY.                                         #
-#                                                                                         #
-#    The author thanks c-energy for providing detailed                                    #
-#    instructions on pulseaudio setup.                                                    #
-#    https://c-nergy.be/blog/?p=16817                                                     #
-#                                                                                         #
-#    Thank you for using this script.                                                     #
-###########################################################################################
 
+#==========================================================================================
+#    Audio Redirection Setup Script for ciab-oneclick                                     
+#    Github link: https://github.com/Har-Kuun/OneClickDesktop                             
+#    Contact me: https://t.me/hsun94   E-mail: hi@qing.su                                 
+#                                                                                         
+#    This script is distributed in the hope that it will be                               
+#    useful, but ABSOLUTELY WITHOUT ANY WARRANTY.                                         
+#                                                                                         
+#    The author thanks c-energy for providing detailed                                    
+#    instructions on pulseaudio setup.                                                    
+#    https://c-nergy.be/blog/?p=16817                                                     
+#                                                                                         
+#==========================================================================================
  
 exec > >(tee -i OneClickDesktop_AudioRedirection.log)
 exec 2>&1
 
+
+#==========================================================================================
+#
 function check_OS
 {
 	if [ -f /etc/lsb-release ] ; then
@@ -51,6 +52,9 @@ function check_OS
 	fi
 }
 
+
+#==========================================================================================
+#
 function say
 {
 #This function is a colored version of the built-in "echo."
@@ -89,6 +93,9 @@ function say
 	printf "\n"
 }
 
+
+#==========================================================================================
+#
 function check_OneClickDesktop_installation
 {
 	ss -lnpt | grep xrdp > /dev/null
@@ -111,6 +118,8 @@ function check_OneClickDesktop_installation
 	fi
 }
 
+#==========================================================================================
+#
 function display_license
 {
 	echo 
@@ -123,6 +132,9 @@ function display_license
 	echo '*******************************************************************'
 	echo 
 }
+
+#==========================================================================================
+#
 
 function AudioRedirectionSetup_Ubuntu
 {
@@ -177,6 +189,8 @@ function AudioRedirectionSetup_Ubuntu
 	install -t "/usr/lib/pulse-$pulsever/modules" -D -m 644 *.so
 }
 
+#==========================================================================================
+#
 function AudioRedirectionSetup_Debian
 {
 	apt-get install git libpulse-dev autoconf m4 intltool dpkg-dev screen libtool libsndfile-dev libcap-dev libjson-c-dev -y
@@ -221,6 +235,8 @@ function AudioRedirectionSetup_Debian
 	install -t "/usr/lib/pulse-$pulsever/modules" -D -m 644 *.so
 }
 
+#==========================================================================================
+#
 function main
 {
 	display_license
@@ -247,11 +263,12 @@ function main
 	echo "Have a nice day!"
 }
 
-###############################################################
-#                                                             #
-#               The main function starts here.                #
-#                                                             #
-###############################################################
+#==========================================================================================
+#
+#               The main function starts here.
+#
+#==========================================================================================
+
 
 main
 exit 0
