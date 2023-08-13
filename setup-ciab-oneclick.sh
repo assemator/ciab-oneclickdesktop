@@ -196,12 +196,12 @@ function install_guacamole_ubuntu
 	echo
 	say @B"Setting up dependencies..." yellow
 	echo
-	apt-get update && apt-get upgrade -y
-	apt-get -y install wget curl zip unzip tar perl expect build-essential libcairo2-dev libpng-dev libtool-bin libossp-uuid-dev freerdp2-dev 
-	apt-get -y libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev 
-	apt-get -y libavcodec-dev libavutil-dev libavformat-dev tomcat9 tomcat9-admin tomcat9-common tomcat9-user 
-	apt-get -y fonts-ipafont-gothic fonts-unfonts-core
-	apt-get -y install libjpeg-turbo8-dev 
+	apt update && apt upgrade -y
+	apt install -y wget curl zip unzip tar perl expect build-essential libcairo2-dev libpng-dev libtool-bin libossp-uuid-dev freerdp2-dev git wget
+	apt install -y libssh2-1-dev libtelnet-dev libwebsockets-dev libpulse-dev libvorbis-dev libwebp-dev libssl-dev libpango1.0-dev libswscale-dev 
+	apt install -y libavcodec-dev libavutil-dev libavformat-dev tomcat9 tomcat9-admin tomcat9-common tomcat9-user 
+	apt install -y fonts-ipafont-gothic fonts-unfonts-core
+	apt install -y libjpeg-turbo8-dev 
 
 	wget $GUACAMOLE_DOWNLOAD_LINK
 	tar zxf guacamole-server-${GUACAMOLE_VERSION}.tar.gz
@@ -340,7 +340,7 @@ function install_rdp
 			echo "---------------------------------"
 			echo "You chose the Kubuntu KDE Desktop"
 			echo
-			sudo apt-get install kubuntu-desktop -y
+			sudo apt install kubuntu-desktop -y
 			break
 
 		elif [ $OPT = "LXDE" ] &> /dev/null
@@ -349,7 +349,7 @@ function install_rdp
 			echo "----------------------------------"
 			echo "You chose the Lubuntu LXDE Desktop"
 			echo
-			sudo apt-get install lubuntu-desktop -y
+			sudo apt install lubuntu-desktop -y
 			break
 
 		elif [ $OPT = "GNOME" ] &> /dev/null
@@ -358,7 +358,7 @@ function install_rdp
 			echo "----------------------------------"
 			echo "You chose the Ubuntu Gnome Desktop"
 			echo
-			sudo apt-get install ubuntu-desktop -y
+			sudo apt install ubuntu-desktop -y
 			break
 
 		elif [ $OPT = "MATE" ] &> /dev/null
@@ -384,7 +384,7 @@ function install_rdp
 			echo "----------------------------------"
 			echo "You chose the Xubuntu XFCE Desktop"
 			echo
-			sudo apt-get install xubuntu-desktop -y
+			sudo apt install xubuntu-desktop -y
 			break
 
 		elif [ $OPT = "BUDGIE" ] &> /dev/null
@@ -409,7 +409,7 @@ function install_rdp
 	#END
 
 	sudo systemctl set-default graphical.target
-	apt-get install firefox xrdp -y
+	apt install firefox xrdp -y
 
 	say @B"Desktop, browser, and XRDP server successfully installed." green
 	echo "Starting to configure XRDP server..."
@@ -476,7 +476,7 @@ function install_reverse_proxy
 	say @B"Setting up Nginx reverse proxy..." yellow
 	sleep 2
 
-	apt-get install nginx certbot python3-certbot-nginx -y
+	apt install nginx certbot python3-certbot-nginx -y
 
 	say @B"Nginx successfully installed!" green
 	cat > /etc/nginx/conf.d/guacamole.conf <<END
