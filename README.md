@@ -28,18 +28,12 @@ A one-click script that installs a Selectable Remote Ubuntu Desktop Environment 
 * Then, please run the following commands as a sudo user in the Host/Server/Cloud-instance/VM
 
 ```
->  sudo adduser yourID  # answer all the questions to setup your own User Account in both the HOST & container
->  sudo adduser yourID adm
->  sudo adduser yourID sudo
->  sudo mkdir /opt/ciab
->  sudo chown yourID:yourID /opt/ciab
->  sudo chmod 766 /opt/ciab
->  cd /opt/ciab
->  su yourID
->  wget https://github.com/assemator/ciab-oneclickdesktop/archive/refs/heads/master.zip
->  sudo apt install unzip -y
->  unzip master.zip
->  setup-ciab-oneclick.sh
+export USERID=YourUserHERE
+git clone https://github.com/assemator/ciab-oneclickdesktop.git /opt/ciab-oneclickdesktop
+useradd -G adm,sudo -s /usr/bin/bash -m $USERID && passwd $USERID
+chown -R $USERID:$USERID /opt/ciab-oneclickdesktop && chmod -R 766 /opt/ciab-oneclickdesktop && chmod +x /opt/ciab-oneclickdesktop/*.sh
+cd /opt/ciab-oneclickdesktop && su $USERID 
+sudo ./setup-ciab-oneclick.sh
 
 ```
 * The script will guide you through the installation process.
