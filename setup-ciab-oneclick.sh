@@ -182,7 +182,7 @@ function get_user_options
 
 		# Set NGINX to use a "Self-SignedCertificate"
 
-		$INSTALL_DIR/setup-nginx.sh
+		$PWD/setup-nginx.sh
 
 	fi
 
@@ -375,7 +375,7 @@ function install_rdp
 			# So when we install XRDP we will know whether we need to patch the
 			# /usr/share/applications/caja.desktop
 
-			sudo touch $INSTALL_DIR/fix-mate
+			sudo touch $PWD/fix-mate
 
 			break
 
@@ -400,7 +400,7 @@ function install_rdp
 			# So when we install XRDP we will know whether we need to patch /etc/xrdp/startwm.sh
 			# See - CIAB Installation PDF in Errata section at the end.
 
-			sudo touch $INSTALL_DIR/fix-budgie
+			sudo touch $PWD/fix-budgie
 
 			break
 
@@ -554,12 +554,12 @@ function main
 			# use HTTPS and its encryption of the web browser communcations link to the
 			# ciab-onclick selected Desktop
 
-			sudo $INSTALL_DIR/setup-nginx.sh
+			sudo $PWD/setup-nginx.sh
 
 			#=================================================================================
 			# Enable xRDP Audio-Redirection so audio works in the Desktop
 
-			sudo $INSTALL_DIR/setup-xrdp-audio.sh
+			sudo $PWD/setup-xrdp-audio.sh
 
 			say @B"You can now access your desktop at https://$(curl -s icanhazip.com)/guacamole!" green
 			say @B"Your Guacamole username is $guacamole_username and your password is $guacamole_password_prehash." green
