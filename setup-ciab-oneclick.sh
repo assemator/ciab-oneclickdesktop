@@ -38,7 +38,7 @@ OS_CHECK_ENABLED=ON
 #==========================================================================================
 # ID where our Install files are located
 
-INSTALL_DIR=/opt/ciab
+INSTALL_DIR=/opt/ciab/opt/ciab-oneclickdesktop
 
 #==========================================================================================
 #    Functions start here.
@@ -182,7 +182,7 @@ function get_user_options
 
 		# Set NGINX to use a "Self-SignedCertificate"
 
-		$PWD/setup-nginx.sh
+		$INSTALL_DIR/setup-nginx.sh
 
 	fi
 
@@ -375,7 +375,7 @@ function install_rdp
 			# So when we install XRDP we will know whether we need to patch the
 			# /usr/share/applications/caja.desktop
 
-			sudo touch $PWD/fix-mate
+			sudo touch $INSTALL_DIR/fix-mate
 
 			break
 
@@ -400,7 +400,7 @@ function install_rdp
 			# So when we install XRDP we will know whether we need to patch /etc/xrdp/startwm.sh
 			# See - CIAB Installation PDF in Errata section at the end.
 
-			sudo touch $PWD/fix-budgie
+			sudo touch $INSTALL_DIR/fix-budgie
 
 			break
 
@@ -554,12 +554,12 @@ function main
 			# use HTTPS and its encryption of the web browser communcations link to the
 			# ciab-onclick selected Desktop
 
-			sudo $PWD/setup-nginx.sh
+			sudo $INSTALL_DIR/setup-nginx.sh
 
 			#=================================================================================
 			# Enable xRDP Audio-Redirection so audio works in the Desktop
 
-			sudo $PWD/setup-xrdp-audio.sh
+			sudo $INSTALL_DIR/setup-xrdp-audio.sh
 
 			say @B"You can now access your desktop at https://$(curl -s icanhazip.com)/guacamole!" green
 			say @B"Your Guacamole username is $guacamole_username and your password is $guacamole_password_prehash." green
