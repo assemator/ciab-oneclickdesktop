@@ -244,16 +244,15 @@ function install_guacamole_ubuntu
 
 function install_guacamole_web
 {
-	echo
-	echo "Start installaing Guacamole Web Application..."
+	echo 
+	echo "Starting the installation of the Guacamole Web application..."
 	cd $CurrentDir
+	wget https://downloads.apache.org/guacamole/$GUACAMOLE_VERSION/binary/guacamole-$GUACAMOLE_VERSION.war
 	mv guacamole-$GUACAMOLE_VERSION.war /var/lib/tomcat9/webapps/guacamole.war
-i
 	systemctl restart tomcat9 guacd
-
-	echo
-	say @B"Guacamole Web Application successfully installed!" green
-	echo
+	echo 
+	say @B"Guacamole Web application has been successfully installed!" green
+	echo 
 }
 
 function configure_guacamole_ubuntu
