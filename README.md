@@ -32,8 +32,7 @@ export USERID=YourUserHERE
 git clone https://github.com/assemator/ciab-oneclickdesktop.git /opt/ciab-oneclickdesktop
 useradd -G adm,sudo -s /usr/bin/bash -m $USERID && passwd $USERID
 chown -R $USERID:$USERID /opt/ciab-oneclickdesktop && chmod -R 766 /opt/ciab-oneclickdesktop && chmod +x /opt/ciab-oneclickdesktop/*.sh
-cd /opt/ciab-oneclickdesktop && su $USERID 
-sudo ./setup-ciab-oneclick.sh
+cd /opt/ciab-oneclickdesktop && su - $USERID -c 'sudo -S /opt/ciab-oneclickdesktop/setup-ciab-oneclick.sh'
 
 ```
 * The script will guide you through the installation process.
