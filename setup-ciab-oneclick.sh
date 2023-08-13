@@ -38,7 +38,7 @@ OS_CHECK_ENABLED=ON
 #==========================================================================================
 # ID where our Install files are located
 
-INSTALL_DIR=/opt/ciab/opt/ciab-oneclickdesktop
+INSTALL_DIR=/opt/ciab-oneclickdesktop
 
 #==========================================================================================
 #    Functions start here.
